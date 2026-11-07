@@ -75,6 +75,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const observer = new IntersectionObserver(observerCallback, observerOptions);
   sections.forEach(section => observer.observe(section));
 
+  // Live GitHub Public API integration for repository stats and live data feed fallback
+  async function fetchGitHubData() {
+    try {
+      const response = await fetch('https://api.github.com/users/varundev');
+      if (response.ok) {
+        const data = await response.json();
+        const ghRepos = document.getElementById('ghRepos');
+        const ghFollowers = document.getElementById('ghFollowers');
+        if (ghRepos && data.public_repos) ghRepos.textContent = data.public_repos;
+        if (ghFollowers && data.followers) ghFollowers.textContent = data.followers;
+      }
+    } catch (err) {
+      console.log('GitHub API rate limit or offline mode, displaying cached profile stats.');
+    }
+  }
+  fetchGitHubData();
+
   // Contact Form with Advanced Blast Particle Animation on Submit
   const contactForm = document.getElementById('contactForm');
   const formSuccess = document.getElementById('formSuccess');
